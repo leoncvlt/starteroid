@@ -15,11 +15,19 @@ import {
 } from "@chakra-ui/react";
 import { ChevronDownIcon, MoonIcon, SettingsIcon, SunIcon } from "@chakra-ui/icons";
 import { useAccount } from "../../hooks/useAccount";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useLocation } from "react-router-dom";
+import { openCheckoutForm, openPortalForm, openStripeForm } from "../../modules/stripe";
 
 export const Navbar = (props) => {
   const { colorMode, toggleColorMode } = useColorMode();
-  const { email, isLoggedIn } = useAccount();
+  const { email, user, isLoggedIn } = useAccount();
+  console.log(user);
+
+  // const handleCheckoutOpen = async () => {
+  //   const stripe = await loadStripe();
+  //   const session = await sendToCheckoutForm.callPromise({ stripe });
+  //   stripe.redirectToCheckout({ sessionId: session.sessionId });
+  // };
 
   return (
     <Flex
@@ -48,6 +56,21 @@ export const Navbar = (props) => {
                   {email}
                 </MenuButton>
                 <MenuList>
+                  <MenuItem
+                    onClick={() => openStripeForm(user, window.location.href, window.location.href)}
+                  >
+                    Subscription
+                  </MenuItem>
+                  {/* <MenuItem
+                    onClick={() =>
+                      openPortalForm({
+                        customer: "cus_IgwdbA0pNu6Q5X",
+                        returnUrl: "https://github.com/leoncvlt",
+                      })
+                    }
+                  >
+                    Subscription
+                  </MenuItem> */}
                   <MenuItem as={RouterLink} to="/account">
                     Account
                   </MenuItem>
