@@ -20,8 +20,7 @@ import { openCheckoutForm, openPortalForm, openStripeForm } from "../../modules/
 
 export const Navbar = (props) => {
   const { colorMode, toggleColorMode } = useColorMode();
-  const { email, user, isLoggedIn } = useAccount();
-  console.log(user);
+  const { email, user, isLoggedIn, isSubscribed } = useAccount();
 
   // const handleCheckoutOpen = async () => {
   //   const stripe = await loadStripe();
@@ -59,20 +58,10 @@ export const Navbar = (props) => {
                   <MenuItem
                     onClick={() => openStripeForm(user, window.location.href, window.location.href)}
                   >
-                    Subscription
+                    {isSubscribed ? "Manage" : "Update"} Subscription
                   </MenuItem>
-                  {/* <MenuItem
-                    onClick={() =>
-                      openPortalForm({
-                        customer: "cus_IgwdbA0pNu6Q5X",
-                        returnUrl: "https://github.com/leoncvlt",
-                      })
-                    }
-                  >
-                    Subscription
-                  </MenuItem> */}
                   <MenuItem as={RouterLink} to="/account">
-                    Account
+                    Manage Account
                   </MenuItem>
                   <MenuItem as={RouterLink} to="/sign-out">
                     Sign Out

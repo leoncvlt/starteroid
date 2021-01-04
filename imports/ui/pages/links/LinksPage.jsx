@@ -2,28 +2,26 @@ import React from "react";
 import { useTracker } from "meteor/react-meteor-data";
 import { Redirect } from "react-router";
 import { useState, useEffect } from "react";
-import { Button, Box, Alert, AlertIcon, useDisclosure, Stack } from "@chakra-ui/react";
+import { Button, Box, Alert, AlertIcon, useDisclosure, Stack, Tag } from "@chakra-ui/react";
 import { createLink, deleteLink, updateLink } from "../../../api/links/methods";
 import { LinkEditModal } from "./LinkEditModal";
 import { useParams } from "react-router-dom";
 import { LinksTable } from "./LinksTable";
 import { Links } from "../../../api/links/links";
 import { LinksShareSwitch } from "./LinksShareSwitch";
+import { useAccount } from "../../../hooks/useAccount";
+import { useSubscription } from "../../../hooks/useSubscription";
 
 export const LinksPage = () => {
   // const [links, setLinks] = useState([]);
   const [currentLinkId, setCurrentLinkId] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { ownerId } = useParams();
-
-  // useEffect(() => {
-  //   const query = ownerId ? { owner: ownerId } : { owner: null };
-  //   getLinks.callPromise({ query }).then((result) => setLinks(result));
-  // }, []);
+  const { userId, isSubscribed } = useAccount();
+  const { openSubscriptionPrompt } = useSubscription();
 
   const { owned, viewable } = useTracker(() => {
     const handle = Meteor.subscribe("user.private", ownerId);
-    const userId = Meteor.userId();
     const owner = Meteor.users.findOne(ownerId);
     return {
       owned: userId === ownerId,
@@ -42,6 +40,9 @@ export const LinksPage = () => {
   }, [ownerId]);
 
   const handleLinkCreate = (linkData) => {
+    if (!canAddLink()) {
+      return;
+    }
     createLink
       .callPromise(linkData)
       .then((result) => onClose())
@@ -61,7 +62,13 @@ export const LinksPage = () => {
     }
   };
 
+  const canAddLink = () => isSubscribed || links.length < 5;
+
   const handleDialogOpen = (linkId) => {
+    if (!canAddLink()) {
+      openSubscriptionPrompt("You can only add up to 5 links with a free subscription.");
+      return;
+    }
     setCurrentLinkId(linkId);
     onOpen();
   };

@@ -13,32 +13,35 @@ import { ForgotPasswordPage } from "../pages/authentication/ForgotPasswordPage.j
 import { ResetPasswordPage } from "../pages/authentication/ResetPasswordPage.jsx";
 import { useAccount } from "../../hooks/useAccount.js";
 import { AccountPage } from "../pages/account/AccountPage.jsx";
+import { SubscriptionPromptProvider } from "../../context/subscriptionPromptContext.js";
 
 export const App = () => {
   const { userId } = useAccount();
   return (
     <Router>
       <ChakraProvider>
-        <Navbar />
-        <Container maxW="xl">
-          <Switch>
-            <PublicRoute exact path="/sign-in" component={SignInPage} />
-            <PublicRoute exact path="/register" component={SignUpPage} />
-            <Route exact path="/recover-password" component={ForgotPasswordPage} />
-            <Route
-              name="reset-password"
-              path="/reset-password/:token"
-              component={ResetPasswordPage}
-            />
-            <PrivateRoute exact path="/sign-out" component={SignOut} />
-            <PrivateRoute exact path="/account" component={AccountPage} />
+        <SubscriptionPromptProvider>
+          <Navbar />
+          <Container maxW="xl">
+            <Switch>
+              <PublicRoute exact path="/sign-in" component={SignInPage} />
+              <PublicRoute exact path="/register" component={SignUpPage} />
+              <Route exact path="/recover-password" component={ForgotPasswordPage} />
+              <Route
+                name="reset-password"
+                path="/reset-password/:token"
+                component={ResetPasswordPage}
+              />
+              <PrivateRoute exact path="/sign-out" component={SignOut} />
+              <PrivateRoute exact path="/account" component={AccountPage} />
 
-            <PublicRoute exact path="/" redirect={`/links/${userId}`} component={LinksPage} />
-            <Route exact path="/links/:ownerId" component={LinksPage} />
+              <PublicRoute exact path="/" redirect={`/links/${userId}`} component={LinksPage} />
+              <Route exact path="/links/:ownerId" component={LinksPage} />
 
-            <Route path="*" component={NotFoundPage} />
-          </Switch>
-        </Container>
+              <Route path="*" component={NotFoundPage} />
+            </Switch>
+          </Container>
+        </SubscriptionPromptProvider>
       </ChakraProvider>
     </Router>
   );

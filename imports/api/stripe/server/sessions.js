@@ -6,7 +6,7 @@ const priceId = "price_1I5XVODhWDCrMiBydO1C7r5p";
 
 export const createServerCheckoutSession = async ({ successUrl, cancelUrl, email, customerId }) => {
   try {
-    const session = await stripe.checkout.sessions.create({
+    const params = {
       mode: "subscription",
       payment_method_types: ["card"],
       line_items: [
@@ -21,9 +21,14 @@ export const createServerCheckoutSession = async ({ successUrl, cancelUrl, email
       // is redirected to the success page.
       success_url: successUrl + "?session_id={CHECKOUT_SESSION_ID}",
       cancel_url: cancelUrl,
-      customer_email: email,
-      customer: customerId,
-    });
+    };
+    // You may only specify one of these parameters: customer, customer_email.
+    if (customerId) {
+      params.customer = customerId;
+    } else {
+      params.customer_email = email;
+    }
+    const session = await stripe.checkout.sessions.create(params);
 
     return {
       sessionId: session.id,

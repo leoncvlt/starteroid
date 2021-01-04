@@ -11,12 +11,14 @@ import {
   useClipboard,
   Center,
   HStack,
+  Tag,
 } from "@chakra-ui/react";
 import { useAccount } from "../../../hooks/useAccount";
 import { makeLinksPrivate, makeLinksPublic } from "../../../api/users/methods";
+import { UnlockIcon } from "@chakra-ui/icons";
 
 export const LinksShareSwitch = () => {
-  const { user } = useAccount({ private: 1 });
+  const { user, isSubscribed } = useAccount({ private: 1 });
   const [disabled, setDisabled] = useState(false);
 
   const shareableLink = `${window.location.origin}/links/${user?._id}`;
@@ -52,8 +54,9 @@ export const LinksShareSwitch = () => {
           id="email-alerts"
           isChecked={user?.private || false}
           onChange={handleMakePrivate}
-          isDisabled={disabled}
+          isDisabled={disabled || !isSubscribed}
         />
+        {!isSubscribed && <Tag>PRO</Tag>}
       </FormControl>
     </Stack>
   );
