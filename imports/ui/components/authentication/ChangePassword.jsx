@@ -2,20 +2,20 @@ import React, { useState } from "react";
 import { Accounts } from "meteor/accounts-base";
 import SimpleSchema from "simpl-schema";
 import { VStack, Button, Input, FormControl, FormLabel, Alert, AlertIcon } from "@chakra-ui/react";
-import { newPasswordSchema } from "./ResetPassword";
+import { passwordSchema } from "./ResetPassword";
 
 export const ChangePassword = () => {
   const [error, setError] = useState("");
   const defaultState = {
-    currentPassword: "",
-    newPassword: "",
-    confirmNewPassword: "",
+    oldPassword: "",
+    password: "",
+    confirmPassword: "",
   };
 
   const [userInput, setUserInput] = useState(defaultState);
 
-  const changePasswordSchema = newPasswordSchema.extend({
-    currentPassword: {
+  const changePasswordSchema = passwordSchema.extend({
+    oldPassword: {
       type: String,
       min: 6,
     },
@@ -36,7 +36,7 @@ export const ChangePassword = () => {
       return;
     }
 
-    Accounts.changePassword(userInput.currentPassword, userInput.newPassword, (error) => {
+    Accounts.changePassword(userInput.oldPassword, userInput.newPassword, (error) => {
       if (error) {
         setError(error.reason);
       } else {
@@ -53,30 +53,30 @@ export const ChangePassword = () => {
           <FormControl>
             <FormLabel>Current password</FormLabel>
             <Input
-              name="currentPassword"
+              name="oldPassword"
               type="password"
               placeholder="Enter your current password"
-              value={userInput.currentPassword}
+              value={userInput.oldPassword}
               onChange={handleChange}
             />
           </FormControl>
           <FormControl>
             <FormLabel>New password</FormLabel>
             <Input
-              name="newPassword"
+              name="password"
               type="password"
               placeholder="Enter a new password"
-              value={userInput.newPassword}
+              value={userInput.password}
               onChange={handleChange}
             />
           </FormControl>
           <FormControl>
             <FormLabel>Confirm new password</FormLabel>
             <Input
-              name="confirmNewPassword"
+              name="confirmPassword"
               type="password"
               placeholder="Repeat your new password"
-              value={userInput.confirmNewPassword}
+              value={userInput.confirmPassword}
               onChange={handleChange}
             />
           </FormControl>

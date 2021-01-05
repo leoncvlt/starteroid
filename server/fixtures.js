@@ -5,6 +5,7 @@ import { createLink } from "../imports/api/links/methods";
 Meteor.startup(() => {
   // If the Links collection is empty, add some data.
   if (Links.find().count() === 0) {
+    console.log("Creating fixtures data...");
     createLink.call({
       title: "Do the Tutorial",
       url: "https://www.meteor.com/tutorials/react/creating-an-app",

@@ -41,7 +41,7 @@ export const openPortalForm = async ({ customerId, returnUrl }) => {
 
 export const openStripeForm = (user, successUrl, cancelUrl) => {
   if (user.customer && user.customer.id && user.subscription) {
-    openPortalForm({ returnUrl: successUrl });
+    openPortalForm({ returnUrl: cancelUrl });
   } else {
     openCheckoutForm({ successUrl, cancelUrl });
   }

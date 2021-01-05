@@ -4,18 +4,18 @@ import { VStack, Button, Input, FormControl, FormLabel, Alert, AlertIcon } from 
 import { Accounts } from "meteor/accounts-base";
 import SimpleSchema from "simpl-schema";
 
-export const newPasswordSchema = new SimpleSchema({
-  newPassword: {
+export const passwordSchema = new SimpleSchema({
+  password: {
     type: String,
     label: "password",
     min: 6,
   },
-  confirmNewPassword: {
+  confirmPassword: {
     type: String,
     label: "confirm password",
     min: 6,
     custom() {
-      if (this.value !== this.field("newPassword").value) {
+      if (this.value !== this.field("password").value) {
         return "passwordMismatch";
       }
       return null;
@@ -42,7 +42,7 @@ const ResetPassword = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     try {
-      const validate = new SimpleSchema(newPasswordSchema).validator({ clean: true });
+      const validate = new SimpleSchema(passwordSchema).validator({ clean: true });
       validate(userInput);
     } catch (exception) {
       setError(exception.message);
@@ -66,7 +66,7 @@ const ResetPassword = () => {
           <FormControl>
             <FormLabel>New password</FormLabel>
             <Input
-              name="newPassword"
+              name="password"
               type="password"
               placeholder="Enter a new password"
               value={userInput.newPassword}
@@ -76,7 +76,7 @@ const ResetPassword = () => {
           <FormControl>
             <FormLabel>Confirm new password</FormLabel>
             <Input
-              name="confirmNewPassword"
+              name="confirmPassword"
               type="password"
               placeholder="Repeat your new password"
               value={userInput.confirmNewPassword}

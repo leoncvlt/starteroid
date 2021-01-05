@@ -13,7 +13,6 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { useAccount } from "../hooks/useAccount";
-import { getCurrentUser } from "../api/users/methods";
 import { openStripeForm } from "../modules/stripe";
 
 export const SubscriptionPromptContext = React.createContext();
@@ -24,17 +23,10 @@ export const SubscriptionPromptProvider = ({ children }) => {
   const cancelRef = React.useRef();
   const { user, isSubscribed } = useAccount({ customer: 1 });
 
-  // const [user, setUser] = useState();
-  // useEffect(() => {
-  //   getCurrentUser.callPromise().then((user) => {
-  //     setUser(user);
-  //   });
-  // }, [Meteor.userId()]);
-
   const url = window.location.href;
 
   return (
-    <SubscriptionPromptContext.Provider value={{ onOpen, setPromptText }}>
+    <SubscriptionPromptContext.Provider value={{ onOpen, setPromptText, isSubscribed }}>
       {children}
       {!isSubscribed && (
         <AlertDialog

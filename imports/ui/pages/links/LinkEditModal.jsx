@@ -42,7 +42,6 @@ export const LinkEditModal = ({ isOpen, currentLinkId, onClose, onCreate, onUpda
   const handleSubmit = (event) => {
     event.preventDefault();
     const [valid, validatedLinkData] = validate(linkData);
-    console.log(linkData, valid, validatedLinkData);
 
     if (!valid) return;
 
