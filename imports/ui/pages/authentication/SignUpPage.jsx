@@ -15,13 +15,17 @@ export const SignUpPage = () => {
         <Text>
           Already have an account?{" "}
           <Link as={RouterLink} to="/sign-in">
-          Click here to log in
+            Click here to log in
           </Link>
         </Text>
         <Text>
           By registering you agree to our{" "}
-          <Link as={RouterLink} to="/">
+          <Link as={RouterLink} to="/terms-and-conditions" color="blue.500" isExternal>
             terms & conditions
+          </Link>{" "}
+          and{" "}
+          <Link as={RouterLink} to="/privacy-policy" color="blue.500" isExternal>
+            privacy policy
           </Link>
         </Text>
       </VStack>

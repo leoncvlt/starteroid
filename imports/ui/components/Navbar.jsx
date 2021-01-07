@@ -1,9 +1,7 @@
 import React from "react";
 import {
-  Box,
   Heading,
   Flex,
-  Text,
   IconButton,
   useColorMode,
   Button,
@@ -13,20 +11,15 @@ import {
   MenuList,
   MenuItem,
 } from "@chakra-ui/react";
-import { ChevronDownIcon, MoonIcon, SettingsIcon, SunIcon } from "@chakra-ui/icons";
+import { ChevronDownIcon, MoonIcon, SunIcon } from "@chakra-ui/icons";
 import { useAccount } from "../../hooks/useAccount";
-import { Link as RouterLink, useLocation } from "react-router-dom";
-import { openCheckoutForm, openPortalForm, openStripeForm } from "../../modules/stripe";
+import { Link as RouterLink } from "react-router-dom";
+import { openCheckoutOrPortalForm } from "../../modules/stripe";
 
 export const Navbar = (props) => {
   const { colorMode, toggleColorMode } = useColorMode();
   const { email, user, isLoggedIn, isSubscribed } = useAccount();
-
-  // const handleCheckoutOpen = async () => {
-  //   const stripe = await loadStripe();
-  //   const session = await sendToCheckoutForm.callPromise({ stripe });
-  //   stripe.redirectToCheckout({ sessionId: session.sessionId });
-  // };
+  const location = window.location.href;
 
   return (
     <Flex
@@ -55,9 +48,7 @@ export const Navbar = (props) => {
                   {email}
                 </MenuButton>
                 <MenuList>
-                  <MenuItem
-                    onClick={() => openStripeForm(user, window.location.href, window.location.href)}
-                  >
+                  <MenuItem onClick={() => openCheckoutOrPortalForm(user, location, location)}>
                     {isSubscribed ? "Manage" : "Update"} Subscription
                   </MenuItem>
                   <MenuItem as={RouterLink} to="/account">

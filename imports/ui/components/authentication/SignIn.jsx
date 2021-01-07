@@ -21,7 +21,7 @@ export const SignIn = ({ location }) => {
     event.preventDefault();
     const { email, password } = userInput;
     Meteor.loginWithPassword(email, password, (error) => {
-      if (err) {
+      if (error) {
         setError(error.reason);
       } else {
         setError("");

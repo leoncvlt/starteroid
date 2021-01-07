@@ -39,7 +39,7 @@ export const openPortalForm = async ({ customerId, returnUrl }) => {
   window.location.href = session.url;
 };
 
-export const openStripeForm = (user, successUrl, cancelUrl) => {
+export const openCheckoutOrPortalForm = (user, successUrl, cancelUrl) => {
   if (user.customer && user.customer.id && user.subscription) {
     openPortalForm({ returnUrl: cancelUrl });
   } else {

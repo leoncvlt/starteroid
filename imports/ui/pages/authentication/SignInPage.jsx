@@ -12,12 +12,12 @@ export const SignInPage = ({ location }) => {
       </Heading>
       <SignIn location={location} />
       <VStack>
-        <Link as={RouterLink} to="/recover-password">
+        <Link as={RouterLink} to="/recover-password" color="blue.500">
           Forgot your password?
         </Link>
         <Text>
           Don't have an account?
-          <Link as={RouterLink} to="/register">
+          <Link as={RouterLink} to="/register" color="blue.500">
             {" "}
             Click here to register
           </Link>
