@@ -10,17 +10,17 @@
   "dependencies": {
     "@babel/runtime": "^7.11.2",
     "@chakra-ui/icons": "^1.0.2",
-    "@chakra-ui/react": "^1.1.0",
+    "@chakra-ui/react": "^1.1.2",
     "@emotion/react": "^11.1.4",
     "@emotion/styled": "^11.0.0",
     "bcrypt": "^5.0.0",
-    "framer-motion": "^3.1.1",
+    "framer-motion": "^3.2.0",
     "meteor-node-stubs": "^1.0.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
     "simpl-schema": "^1.10.2",
-    "stripe": "^8.129.0"
+    "stripe": "^8.130.0"
   },
   "meteor": {
     "mainModule": {
