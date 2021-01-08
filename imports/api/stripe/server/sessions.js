@@ -1,7 +1,7 @@
 import Stripe from "stripe";
 import { Meteor } from "meteor/meteor";
 
-const stripe = Stripe(Meteor.settings.private.stripe);
+const stripe = Stripe(Meteor.settings.private.stripe.key);
 const priceId = "price_1I5XVODhWDCrMiBydO1C7r5p";
 
 export const createServerCheckoutSession = async ({ successUrl, cancelUrl, email, customerId }) => {
@@ -34,7 +34,7 @@ export const createServerCheckoutSession = async ({ successUrl, cancelUrl, email
       sessionId: session.id,
     };
   } catch (exception) {
-    throw new Meteor.Error("500", exception);
+    throw new Meteor.Error("500", `[stripe.createServerCheckoutSession] ${exception}`);
   }
 };
 
@@ -51,6 +51,6 @@ export const createServerPortalSession = async ({ customerId, returnUrl }) => {
       url: portalsession.url,
     };
   } catch (exception) {
-    throw new Meteor.Error("500", exception);
+    throw new Meteor.Error("500", `[stripe.createServerPortalSession] ${exception}`);
   }
 };

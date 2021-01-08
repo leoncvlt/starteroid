@@ -21,6 +21,7 @@ import { TermsAndConditionsPage } from "../pages/terms-and-conditions/TermsAndCo
 import { SubscriptionPromptProvider } from "../../context/subscriptionPromptContext.js";
 
 import { useAccount } from "../../hooks/useAccount.js";
+import { PageLoadingProvider } from "../../context/pageLoadingContext.js";
 
 export const App = () => {
   const { userId } = useAccount();
@@ -31,37 +32,39 @@ export const App = () => {
         <SubscriptionPromptProvider>
           <Navbar />
           <Container maxW="xl" mb={16}>
-            <Switch>
-              <PublicRoute exact path="/sign-in" component={SignInPage} />
-              <PublicRoute exact path="/register" component={SignUpPage} />
-              <Route exact path="/recover-password" component={ForgotPasswordPage} />
-              <Route
-                name="reset-password"
-                path="/reset-password/:token"
-                component={ResetPasswordPage}
-              />
-              <PrivateRoute exact path="/sign-out" component={SignOut} />
-              <PrivateRoute exact path="/account" component={AccountPage} />
-
-              <PublicRoute exact path="/" redirect={`/links/${userId}`} component={LinksPage} />
-              <Route exact path="/links/:ownerId" component={LinksPage} />
-
-              <Route exact path="/privacy-policy">
-                <PrivacyPolicyPage
-                  websiteName="Astarteroid"
-                  websiteUrl="astarteroid.com"
-                  companyName="Astarteroid"
+            <PageLoadingProvider>
+              <Switch>
+                <PublicRoute exact path="/sign-in" component={SignInPage} />
+                <PublicRoute exact path="/register" component={SignUpPage} />
+                <Route exact path="/recover-password" component={ForgotPasswordPage} />
+                <Route
+                  name="reset-password"
+                  path="/reset-password/:token"
+                  component={ResetPasswordPage}
                 />
-              </Route>
-              <Route exact path="/terms-and-conditions">
-                <TermsAndConditionsPage
-                  websiteName="Astarteroid"
-                  websiteUrl="astarteroid.com"
-                  companyName="Astarteroid"
-                />
-              </Route>
-              <Route path="*" component={NotFoundPage} />
-            </Switch>
+                <PrivateRoute exact path="/sign-out" component={SignOut} />
+                <PrivateRoute exact path="/account" component={AccountPage} />
+
+                <PublicRoute exact path="/" redirect={`/links/${userId}`} component={LinksPage} />
+                <Route exact path="/links/:ownerId" component={LinksPage} />
+
+                <Route exact path="/privacy-policy">
+                  <PrivacyPolicyPage
+                    websiteName="Astarteroid"
+                    websiteUrl="astarteroid.com"
+                    companyName="Astarteroid"
+                  />
+                </Route>
+                <Route exact path="/terms-and-conditions">
+                  <TermsAndConditionsPage
+                    websiteName="Astarteroid"
+                    websiteUrl="astarteroid.com"
+                    companyName="Astarteroid"
+                  />
+                </Route>
+                <Route path="*" component={NotFoundPage} />
+              </Switch>
+            </PageLoadingProvider>
           </Container>
         </SubscriptionPromptProvider>
       </ChakraProvider>

@@ -8,6 +8,7 @@
 - User accounts
 - Basic CRUD flow + [simpl-schema](https://www.npmjs.com/package/simpl-schema) for validation
 - Stripe integration for paid subscriptions, using Stripe Checkout
+- Basic terms & conditions / privacy policy pages, cookies consent popup
 
 ### Settings.json
 The application expects a `settings.json` file in the root folder, which hasn't been committed to github as it stores most of the application secret keys. Running the app without it will cause a very straightforward `settings.json: file not found (settings file)` error. You must create this file yourself and fill the relevant secret information:
@@ -21,8 +22,11 @@ The application expects a `settings.json` file in the root folder, which hasn't 
   "private": {
     "stripe": {
       "key": "sk_test_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-      "subscription_price_id": "prod_xxxxxxxxxxxxxx"
       "webhook_secret": "whsec_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "subscription": {
+        "monthly_id": "prod_xxxxxxxxxxxxxx",
+        "yearly_id": "prod_xxxxxxxxxxxxxx"
+      }
     }
   }
 }
@@ -40,3 +44,6 @@ The application expects a `settings.json` file in the root folder, which hasn't 
   - During development, you can use ngrok to get a public URL tunneling to your localhost for testing
   - Note down the webhook signing secret, and write it in your `settings.json`
 - In "Settings", navigate to "Customer Portal" under "Billing", customize the options as you see fit and click "Save" - this is needed in order to create portal sessions in test mode.
+
+## Deployement
+Deployment is handled via [Meteor Up](http://meteor-up.com/). 

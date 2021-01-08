@@ -8,16 +8,14 @@ import {
   FormLabel,
   Switch,
   Button,
-  useClipboard,
-  Center,
-  HStack,
   Tag,
+  useClipboard,
 } from "@chakra-ui/react";
 import { useAccount } from "../../../hooks/useAccount";
 import { makeLinksPrivate, makeLinksPublic } from "../../../api/users/methods";
 import { useSubscription } from "../../../hooks/useSubscription";
 
-export const LinksShare = () => {
+export const LinksShare = ({ loading }) => {
   const { user } = useAccount({ private: 1 });
   const [disabled, setDisabled] = useState(false);
   const { openSubscriptionPrompt, isSubscribed } = useSubscription();

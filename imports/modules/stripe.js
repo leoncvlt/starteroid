@@ -22,7 +22,7 @@ const loadStripe = () =>
       else document.body.appendChild(script);
 
       script.onload = () => {
-        window.stripe = Stripe(Meteor.settings.public.stripe);
+        window.stripe = Stripe(Meteor.settings.public.stripe.key);
         resolve(window.stripe);
       };
     }
@@ -34,15 +34,15 @@ export const openCheckoutForm = async ({ successUrl, cancelUrl }) => {
   stripe.redirectToCheckout({ sessionId: session.sessionId });
 };
 
-export const openPortalForm = async ({ customerId, returnUrl }) => {
+export const openPortalForm = async ({ returnUrl }) => {
   const session = await createPortalSession.callPromise({ customerId, returnUrl });
   window.location.href = session.url;
 };
 
-export const openCheckoutOrPortalForm = (user, successUrl, cancelUrl) => {
+export const openCheckoutOrPortalForm = async (user, successUrl, cancelUrl) => {
   if (user.customer && user.customer.id && user.subscription) {
-    openPortalForm({ returnUrl: cancelUrl });
+    await openPortalForm({ returnUrl: cancelUrl });
   } else {
-    openCheckoutForm({ successUrl, cancelUrl });
+    await openCheckoutForm({ successUrl, cancelUrl });
   }
 };

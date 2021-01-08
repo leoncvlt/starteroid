@@ -8,60 +8,62 @@ import {
 
 const bound = Meteor.bindEnvironment((callback) => callback());
 
-const stripe = Stripe(Meteor.settings.private.stripe);
-const secret = Meteor.settings.private.webhook;
+const stripe = Stripe(Meteor.settings.private.stripe.key);
+const secret = Meteor.settings.private.stripe.webhook_secret;
 
-WebApp.connectHandlers.use("/api/stripe/webhooks", (req, res, next) => {
-  if (req.method === "POST") {
+const failWebhook = (error, response, reason = "Stripe webhook execution failed") => {
+  console.error(`[api.stripe.webhooks] ${reason}: ${error}`);
+  response.writeHead(400);
+  response.end(error);
+};
+
+const handleCustomerCreated = (event, response) => {
+  const { email, id: customerId } = event.data.object;
+  updateCustomerData
+    .callPromise({ email, customerId })
+    .catch((error) => failWebhook(error, response));
+};
+
+const handleCustomerSubscriptionUpdated = (event, response) => {
+  const { status, current_period_end, id: customerId } = event.data.object;
+  updateSubscriptionData
+    .callPromise({ customerId, status, current_period_end })
+    .catch((error) => failWebhook(error, response));
+};
+
+const handleCustomerSubscriptionDeleted = (event, response) => {
+  const { customer } = event.data.object;
+  removeSubscription.callPromise({ customer }).catch((error) => failWebhook(error, response));
+};
+
+WebApp.connectHandlers.use("/api/stripe/webhooks", (request, response, next) => {
+  if (request.method === "POST") {
     let event;
     let body = "";
-    let signature = req.headers["stripe-signature"];
-    req.on("data", (data) =>
-      bound(() => {
-        body += data;
-      })
-    );
-    req.on("end", () =>
+    let signature = request.headers["stripe-signature"];
+    request.on("data", (data) => bound(() => (body += data)));
+    request.on("end", () =>
       bound(() => {
         try {
           event = stripe.webhooks.constructEvent(body, signature, secret);
-        } catch (err) {
-          console.warn("Webhook signature verification failed.");
-          res.writeHead(400);
-          res.end();
+        } catch (error) {
+          failWebhook(error, response, "Stripe webhook signature verification failed");
           return;
         }
+        const data = event.data.object;
         switch (event.type) {
           case "checkout.session.completed":
             // Payment is successful and the subscription is created.
             // You should provision the subscription.
             break;
           case "customer.created":
-            let { id, email } = event.data.object;
-            updateCustomerData.callPromise({ email, customerId: id }).catch((error) => {
-              console.warn(error);
-              res.writeHead(400);
-              res.end(error);
-            });
+            handleCustomerCreated(event, response);
             break;
           case "customer.subscription.updated":
-            let { customer, status, current_period_end } = event.data.object;
-            updateSubscriptionData
-              .callPromise({ customerId: customer, status, current_period_end })
-              .catch((error) => {
-                console.warn(error);
-                res.writeHead(400);
-                res.end(error);
-              });
+            handleCustomerSubscriptionUpdated(event, response);
             break;
           case "customer.subscription.deleted":
-            removeSubscription
-              .callPromise({ customer: event.data.object.customer })
-              .catch((error) => {
-                console.warn(error);
-                res.writeHead(400);
-                res.end(error);
-              });
+            handleCustomerSubscriptionDeleted(event, response);
             break;
           case "invoice.paid":
             // Continue to provision the subscription as payments continue to be made.
@@ -76,8 +78,8 @@ WebApp.connectHandlers.use("/api/stripe/webhooks", (req, res, next) => {
           default:
           // Unhandled event type
         }
-        res.writeHead(200);
-        res.end();
+        response.writeHead(200);
+        response.end();
       })
     );
   } else {

@@ -3,16 +3,6 @@ import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { CallPromiseMixin } from "meteor/didericis:callpromise-mixin";
 import { deleteAllLinksForUser } from "../links/methods";
 
-export const isUserSubscribed = new ValidatedMethod({
-  name: "users.get.subscribed",
-  mixins: [CallPromiseMixin, LoggedInMixin],
-  checkLoggedInError: { error: "notLogged" },
-  validate: null,
-  run() {
-    return Meteor.users.findOne(this.userId)?.subscription == "active";
-  },
-});
-
 export const makeLinksPrivate = new ValidatedMethod({
   name: "users.set.private",
   mixins: [CallPromiseMixin, LoggedInMixin],

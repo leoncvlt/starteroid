@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTracker } from "meteor/react-meteor-data";
@@ -13,10 +13,18 @@ import { Links } from "../../../api/links/links";
 import { createLink, deleteLink, updateLink } from "../../../api/links/methods";
 
 import { useSubscription } from "../../../hooks/useSubscription";
+import { PageLoadingContext } from "../../../context/pageLoadingContext";
+
+const FREE_LINKS_LIMIT = 5;
 
 export const LinksPage = () => {
   const [currentLinkId, setCurrentLinkId] = useState(null);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { setPageLoading } = useContext(PageLoadingContext);
+  const {
+    isOpen: isLinkModalOpen,
+    onOpen: openLinkModal,
+    onClose: closeLinkModal,
+  } = useDisclosure();
   const { openSubscriptionPrompt, isSubscribed } = useSubscription();
   const { ownerId } = useParams();
 
@@ -41,20 +49,22 @@ export const LinksPage = () => {
     };
   }, [ownerId]);
 
+  useEffect(() => setPageLoading(loading), [loading]);
+
   const handleLinkCreate = (linkData) => {
     if (!canAddLink()) {
       return;
     }
     createLink
       .callPromise(linkData)
-      .then((result) => onClose())
+      .then((result) => closeLinkModal())
       .catch((error) => console.log(error));
   };
 
   const handleLinkUpdate = (linkData) => {
     updateLink
       .callPromise(linkData)
-      .then((result) => onClose())
+      .then((result) => closeLinkModal())
       .catch((error) => console.log(error));
   };
 
@@ -64,7 +74,7 @@ export const LinksPage = () => {
     }
   };
 
-  const canAddLink = () => isSubscribed || links.length < 5;
+  const canAddLink = () => isSubscribed || links.length < FREE_LINKS_LIMIT;
 
   const handleDialogOpen = (linkId) => {
     if (!linkId && !canAddLink()) {
@@ -72,12 +82,12 @@ export const LinksPage = () => {
       return;
     }
     setCurrentLinkId(linkId);
-    onOpen();
+    openLinkModal();
   };
 
   const handleDialogClose = () => {
     setCurrentLinkId(null);
-    onClose();
+    closeLinkModal();
   };
 
   return (
@@ -103,13 +113,13 @@ export const LinksPage = () => {
               </Button>
               <LinkEditModal
                 currentLinkId={currentLinkId}
-                isOpen={isOpen}
+                isOpen={isLinkModalOpen}
                 onClose={handleDialogClose}
                 onCreate={handleLinkCreate}
                 onUpdate={handleLinkUpdate}
               />
               <br />
-              <LinksShare />
+              <LinksShare loading={loading} />
             </>
           )}
           {!loggedIn && (

@@ -13,20 +13,26 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { useAccount } from "../hooks/useAccount";
-import { openStripeForm } from "../modules/stripe";
+import { openCheckoutOrPortalForm } from "../modules/stripe";
 
 export const SubscriptionPromptContext = React.createContext();
 
 export const SubscriptionPromptProvider = ({ children }) => {
   const [promptText, setPromptText] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const cancelRef = React.useRef();
   const { user, isSubscribed } = useAccount({ customer: 1 });
 
-  const url = window.location.href;
+  const cancelRef = React.useRef();
+
+  const handleStripeRedirect = () => {
+    const location = window.location.href;
+    openCheckoutOrPortalForm(user, location, location);
+  };
 
   return (
-    <SubscriptionPromptContext.Provider value={{ onOpen, setPromptText, isSubscribed }}>
+    <SubscriptionPromptContext.Provider
+      value={{ onOpen, setPromptText, isSubscribed, handleStripeRedirect }}
+    >
       {children}
       {!isSubscribed && (
         <AlertDialog
@@ -37,7 +43,6 @@ export const SubscriptionPromptProvider = ({ children }) => {
           isCentered
         >
           <AlertDialogOverlay />
-
           <AlertDialogContent>
             <AlertDialogHeader></AlertDialogHeader>
             <AlertDialogCloseButton />
@@ -49,7 +54,7 @@ export const SubscriptionPromptProvider = ({ children }) => {
               <Button ref={cancelRef} onClick={onClose}>
                 Maybe later
               </Button>
-              <Button colorScheme="blue" ml={3} onClick={() => openStripeForm(user, url, url)}>
+              <Button colorScheme="blue" ml={3} onClick={handleStripeRedirect}>
                 Update now
               </Button>
             </AlertDialogFooter>
