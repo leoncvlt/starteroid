@@ -14,10 +14,12 @@ import {
 import { ChevronDownIcon, MoonIcon, SunIcon } from "@chakra-ui/icons";
 import { useAccount } from "../../hooks/useAccount";
 import { Link as RouterLink } from "react-router-dom";
+import { useSubscription } from "../../hooks/useSubscription";
 
 export const Navbar = (props) => {
   const { colorMode, toggleColorMode } = useColorMode();
-  const { email, isLoggedIn, isSubscribed } = useAccount();
+  const { email, isLoggedIn } = useAccount();
+  const { isSubscribed } = useSubscription();
 
   return (
     <Flex
@@ -50,13 +52,13 @@ export const Navbar = (props) => {
                     as={RouterLink}
                     to={{ pathname: "/membership", state: { from: window.location.href } }}
                   >
-                    {isSubscribed ? "Manage" : "Update"} Subscription
+                    {isSubscribed ? "Manage" : "Update"} membership
                   </MenuItem>
                   <MenuItem as={RouterLink} to="/account">
-                    Manage Account
+                    Manage account
                   </MenuItem>
                   <MenuItem as={RouterLink} to="/sign-out">
-                    Sign Out
+                    Sign out
                   </MenuItem>
                 </MenuList>
               </Menu>
@@ -64,7 +66,7 @@ export const Navbar = (props) => {
           ) : (
             <>
               <RouterLink to="/sign-in">
-                <Button>Sign In</Button>
+                <Button>Sign in</Button>
               </RouterLink>
               <RouterLink to="/register">
                 <Button>Register</Button>

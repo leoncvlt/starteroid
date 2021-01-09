@@ -42,7 +42,10 @@ export const updateCustomerData = new ValidatedMethod({
     import { Accounts } from "meteor/accounts-base";
     const user = Accounts.findUserByEmail(email);
     if (!user) {
-      throw new Meteor.Error("500", `User with email ${email} not found`);
+      throw new Meteor.Error(
+        "users.update.customer.emailNotFound",
+        `User with email ${email} not found`
+      );
     }
     const customer = { id: customerId };
     return Meteor.users.update(user._id, { $set: { customer } });
@@ -56,7 +59,10 @@ export const updateSubscriptionData = new ValidatedMethod({
   async run({ customerId, subscriptionId, status, currentPeriodEnd }) {
     const user = Meteor.users.findOne({ "customer.id": customerId });
     if (!user) {
-      throw new Meteor.Error("500", `User with customerId ${customerId} not found`);
+      throw new Meteor.Error(
+        "users.update.subscription.customerIdNotFound",
+        `User with customerId ${customerId} not found`
+      );
     }
     const subscription = { id: subscriptionId, status, currentPeriodEnd };
     return Meteor.users.update(user._id, { $set: { subscription } });
@@ -70,7 +76,10 @@ export const removeSubscription = new ValidatedMethod({
   async run({ customerId }) {
     const user = Meteor.users.findOne({ "customer.id": customerId });
     if (!user) {
-      throw new Meteor.Error("500", `User with customerId ${customerId} not found`);
+      throw new Meteor.Error(
+        "users.delete.subscription.customerIdNotFound",
+        `User with customerId ${customerId} not found`
+      );
     }
     return Meteor.users.update(user._id, { $unset: { subscription: true } });
   },

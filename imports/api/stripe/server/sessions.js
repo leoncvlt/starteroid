@@ -40,7 +40,7 @@ export const createCheckoutSession = async ({
       sessionId: session.id,
     };
   } catch (exception) {
-    throw new Meteor.Error("500", `[stripe.createServerCheckoutSession] ${exception}`);
+    throw new Meteor.Error("stripe.createCheckoutSession", exception.toString());
   }
 };
 
@@ -57,6 +57,6 @@ export const createPortalSession = async ({ customerId, returnUrl }) => {
       url: portalsession.url,
     };
   } catch (exception) {
-    throw new Meteor.Error("500", `[stripe.createServerPortalSession] ${exception}`);
+    throw new Meteor.Error("stripe.createPortalSession", exception.toString());
   }
 };

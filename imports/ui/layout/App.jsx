@@ -6,10 +6,11 @@ import { Navbar } from "../components/Navbar.jsx";
 import { CookiesConsent } from "../components/CookiesConsent.jsx";
 import { PublicRoute } from "../components/routing/PublicRoute.jsx";
 import { PrivateRoute } from "../components/routing/PrivateRoute.jsx";
+import { SignOut } from "../components/authentication/SignOut.jsx";
 
 import { LinksPage } from "../pages/links/LinksPage.jsx";
 import { AccountPage } from "../pages/account/AccountPage.jsx";
-import { SignOut } from "../components/authentication/SignOut.jsx";
+import { PlansPage } from "../pages/plans/PlansPage.jsx";
 import { SignInPage } from "../pages/authentication/SignInPage.jsx";
 import { SignUpPage } from "../pages/authentication/SignUpPage.jsx";
 import { ForgotPasswordPage } from "../pages/authentication/ForgotPasswordPage.jsx";
@@ -18,11 +19,10 @@ import { NotFoundPage } from "../pages/not-found/NotFoundPage.jsx";
 import { PrivacyPolicyPage } from "../pages/privacy-policy/PrivacyPolicyPage.jsx";
 import { TermsAndConditionsPage } from "../pages/terms-and-conditions/TermsAndConditionsPage.jsx";
 
-import { SubscriptionPromptProvider } from "../../context/subscriptionPromptContext.js";
+import { SubscriptionProvider } from "../../context/subscriptionContext.js";
+import { PageLoadingProvider } from "../../context/pageLoadingContext.js";
 
 import { useAccount } from "../../hooks/useAccount.js";
-import { PageLoadingProvider } from "../../context/pageLoadingContext.js";
-import { PlansPage } from "../pages/plans/PlansPage.jsx";
 
 export const App = () => {
   const { userId } = useAccount();
@@ -30,7 +30,7 @@ export const App = () => {
     <Router>
       <ChakraProvider>
         <CookiesConsent />
-        <SubscriptionPromptProvider>
+        <SubscriptionProvider>
           <Navbar />
           <Container maxW="xl" mb={16}>
             <PageLoadingProvider>
@@ -68,7 +68,7 @@ export const App = () => {
               </Switch>
             </PageLoadingProvider>
           </Container>
-        </SubscriptionPromptProvider>
+        </SubscriptionProvider>
       </ChakraProvider>
     </Router>
   );

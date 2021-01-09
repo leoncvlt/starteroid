@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useState } from "react";
 
 import {
   Text,
@@ -11,29 +11,48 @@ import {
   AlertDialogOverlay,
   AlertDialogCloseButton,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import { useAccount } from "../hooks/useAccount";
+import { useHistory } from "react-router-dom";
 import { startStripeSession } from "../modules/stripe";
 
-export const SubscriptionPromptContext = React.createContext();
+export const SubscriptionContext = React.createContext();
 
-export const SubscriptionPromptProvider = ({ children }) => {
+export const SubscriptionProvider = ({ children }) => {
+  const history = useHistory();
+  const toast = useToast();
   const [promptText, setPromptText] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { user, isSubscribed } = useAccount({ customer: 1 });
+  const { user } = useAccount({ customer: 1, subscription: 1 });
+  const isSubscribed = user
+    ? ["active", "trialing", "past_due"].some((s) => user?.subscription?.status == s)
+    : undefined;
 
   const cancelRef = React.useRef();
 
   const handleStartStripeSession = ({ priceId, successUrl, returnUrl }) => {
-    startStripeSession({ user, priceId, successUrl, returnUrl });
+    startStripeSession({ user, priceId, successUrl, returnUrl }).catch((error) =>
+      toast({
+        title: "An error occurred.",
+        description: error.reason,
+        status: "error",
+        isClosable: true,
+      })
+    );
+  };
+
+  const handleSubscribe = () => {
+    history.push("/membership", { from: window.location.href });
+    onClose();
   };
 
   return (
-    <SubscriptionPromptContext.Provider
+    <SubscriptionContext.Provider
       value={{ onOpen, setPromptText, isSubscribed, handleStartStripeSession }}
     >
       {children}
-      {!isSubscribed && (
+      {isSubscribed === false && (
         <AlertDialog
           motionPreset="slideInBottom"
           leastDestructiveRef={cancelRef}
@@ -53,13 +72,13 @@ export const SubscriptionPromptProvider = ({ children }) => {
               <Button ref={cancelRef} onClick={onClose}>
                 Maybe later
               </Button>
-              <Button colorScheme="blue" ml={3} onClick={handleStartStripeSession}>
+              <Button colorScheme="blue" ml={3} onClick={handleSubscribe}>
                 Update now
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
       )}
-    </SubscriptionPromptContext.Provider>
+    </SubscriptionContext.Provider>
   );
 };

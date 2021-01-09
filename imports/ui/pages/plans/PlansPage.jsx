@@ -2,7 +2,8 @@ import React, { useContext, useEffect } from "react";
 import { useTracker } from "meteor/react-meteor-data";
 
 import {
-  Tag,
+  Box,
+  Text,
   Heading,
   Stat,
   StatLabel,
@@ -12,6 +13,9 @@ import {
   VStack,
   useColorModeValue,
   HStack,
+  Skeleton,
+  List,
+  ListItem,
 } from "@chakra-ui/react";
 import { useSubscription } from "../../../hooks/useSubscription";
 import { PageLoadingContext } from "../../../context/pageLoadingContext";
@@ -31,7 +35,7 @@ export const PlansPage = ({ location }) => {
   if (isSubscribed) {
     // if the user is suscribed, redirect to stripe's customer management portal
     handleStartStripeSession({ returnUrl: from });
-    return <></>;
+    return null;
   }
 
   const { loading, plans } = useTracker(() => {
@@ -50,19 +54,29 @@ export const PlansPage = ({ location }) => {
   return (
     <VStack>
       <Heading as="h3" size="lg" mb={4}>
-        Update your Membership
+        Update your membership
       </Heading>
 
-      <HStack>
-        {plans.map((plan) => (
-          <Stat key={plan._id} bg={bg} shadow="lg" rounded="lg" p={4} flex textAlign="center">
-            <StatLabel></StatLabel>
-            <StatNumber>${plan.price / 100}</StatNumber>
-            <StatHelpText>per {plan.interval}</StatHelpText>
-            <Button onClick={() => handlePlanPurchase(plan._id)}>Purchase</Button>
-          </Stat>
-        ))}
-      </HStack>
+      <Box borderWidth="1px" borderRadius="lg" p={4}>
+        <List>
+          <ListItem>⚡ Add unlimited links</ListItem>
+          <ListItem>🔒 Set your links list as private</ListItem>
+          <ListItem>🥰 Support the developer's caffeine addition</ListItem>
+        </List>
+      </Box>
+
+      <Skeleton isLoaded={!loading}>
+        <HStack mt={4}>
+          {plans.map((plan) => (
+            <Stat key={plan._id} bg={bg} shadow="lg" rounded="lg" p={4} flex textAlign="center">
+              <StatLabel></StatLabel>
+              <StatNumber>${plan.price / 100}</StatNumber>
+              <StatHelpText>per {plan.interval}</StatHelpText>
+              <Button onClick={() => handlePlanPurchase(plan._id)}>Purchase</Button>
+            </Stat>
+          ))}
+        </HStack>
+      </Skeleton>
     </VStack>
   );
 };

@@ -31,20 +31,24 @@ export const startStripeSession = ({ priceId, successUrl, returnUrl }) => {
   const host = Meteor.absoluteUrl();
   successUrl = successUrl || host;
   returnUrl = returnUrl || host;
-  Meteor.call(
-    "stripe.session.create",
-    { priceId, successUrl, returnUrl },
-    async (error, session) => {
-      if (error) {
-        console.error(error);
-        return;
+  return new Promise((resolve, reject) => {
+    Meteor.call(
+      "stripe.session.create",
+      { priceId, successUrl, returnUrl },
+      async (error, session) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        if (session.url) {
+          window.location.href = session.url;
+          resolve();
+        } else {
+          const stripe = await loadStripe();
+          stripe.redirectToCheckout({ sessionId: session.sessionId });
+          resolve();
+        }
       }
-      if (session.url) {
-        window.location.href = session.url;
-      } else {
-        const stripe = await loadStripe();
-        stripe.redirectToCheckout({ sessionId: session.sessionId });
-      }
-    }
-  );
+    );
+  });
 };

@@ -17,7 +17,7 @@ export const LinksTable = ({ links, editable, onEdit, onDelete }) => {
           links.map((link) => (
             <Tr key={link._id}>
               <Td>
-                <Link as={Link} href={link.url} isExternal={true}>
+                <Link as={Link} href={"//" + link.url} isExternal={true}>
                   {link.title} <ExternalLinkIcon mx="2px" />
                 </Link>
               </Td>

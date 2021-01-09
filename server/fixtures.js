@@ -27,6 +27,8 @@ Meteor.startup(() => {
     });
   }
 
+  // on development mode, fetch the plans from stripe if the plan collection is empty
+  // on production mode, fetch them each time on application start
   const shouldSyncPlans = Meteor.isDevelopment ? Plans.find().count() === 0 : true;
   if (shouldSyncPlans) {
     import { getPricesForProduct } from "../imports/api/stripe/server/methods";
@@ -35,6 +37,7 @@ Meteor.startup(() => {
       for (const price of result.data) {
         if (price.active) {
           Plans.upsert(
+            // use the price ID as database ID to being able to upsert any changes
             { _id: price.id },
             {
               type: price.type,

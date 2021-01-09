@@ -1,9 +1,9 @@
-import React, { useContext } from "react";
-import { SubscriptionPromptContext } from "../context/subscriptionPromptContext";
+import { useContext } from "react";
+import { SubscriptionContext } from "../context/subscriptionContext";
 
 export const useSubscription = () => {
   const { onOpen, setPromptText, isSubscribed, handleStartStripeSession } = useContext(
-    SubscriptionPromptContext
+    SubscriptionContext
   );
   const openSubscriptionPrompt = (promptText) => {
     setPromptText(promptText);
