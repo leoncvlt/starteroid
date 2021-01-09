@@ -1,3 +1,4 @@
+import { useTracker } from "meteor/react-meteor-data";
 import React, { useState, useEffect } from "react";
 import {
   VStack,
@@ -16,7 +17,7 @@ import {
 } from "@chakra-ui/react";
 import { useValidation } from "../../../hooks/useValidation";
 import { LinksSchema } from "../../../api/links/schema";
-import { getLink } from "../../../api/links/methods";
+import { Links } from "../../../api/links/links";
 
 export const LinkEditModal = ({ isOpen, currentLinkId, onClose, onCreate, onUpdate }) => {
   const defaultState = {
@@ -24,11 +25,16 @@ export const LinkEditModal = ({ isOpen, currentLinkId, onClose, onCreate, onUpda
     url: "",
   };
   const [linkData, setLinkData] = useState(defaultState);
-  const { validate, hasError, errorText } = useValidation(LinksSchema);
+  const [loading, setLoading] = useState(false);
+  const { validate, hasError, errorText, clearErrors } = useValidation(LinksSchema);
 
-  useEffect(() => {
+  useTracker(() => {
+    clearErrors();
     if (currentLinkId) {
-      getLink.callPromise(currentLinkId).then((data) => setLinkData(data));
+      const subscription = Meteor.subscribe("links.one", currentLinkId);
+      const link = Links.findOne({ _id: currentLinkId });
+      setLoading(!subscription.ready());
+      setLinkData(link);
     } else {
       setLinkData(defaultState);
     }
@@ -45,11 +51,13 @@ export const LinkEditModal = ({ isOpen, currentLinkId, onClose, onCreate, onUpda
 
     if (!valid) return;
 
-    if (validatedLinkData._id) {
-      onUpdate(validatedLinkData);
-    } else {
-      onCreate(validatedLinkData);
-    }
+    clearErrors();
+    setLoading(true);
+    const callback = validatedLinkData._id ? onUpdate : onCreate;
+    callback(validatedLinkData)
+      .then((result) => onClose())
+      .catch((error) => console.log(error))
+      .finally(() => setLoading(false));
   };
 
   return (
@@ -74,7 +82,7 @@ export const LinkEditModal = ({ isOpen, currentLinkId, onClose, onCreate, onUpda
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme="blue" onClick={handleSubmit}>
+          <Button colorScheme="blue" isLoading={loading} onClick={handleSubmit}>
             Submit
           </Button>
         </ModalFooter>

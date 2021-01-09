@@ -1,10 +1,13 @@
-import Stripe from "stripe";
 import { Meteor } from "meteor/meteor";
+import Stripe from "./stripe";
 
-const stripe = Stripe(Meteor.settings.private.stripe.key);
-const priceId = "price_1I5XVODhWDCrMiBydO1C7r5p";
-
-export const createServerCheckoutSession = async ({ successUrl, cancelUrl, email, customerId }) => {
+export const createCheckoutSession = async ({
+  priceId,
+  successUrl,
+  cancelUrl,
+  customerEmail,
+  customerId,
+}) => {
   try {
     const params = {
       mode: "subscription",
@@ -22,13 +25,16 @@ export const createServerCheckoutSession = async ({ successUrl, cancelUrl, email
       success_url: successUrl + "?session_id={CHECKOUT_SESSION_ID}",
       cancel_url: cancelUrl,
     };
-    // You may only specify one of these parameters: customer, customer_email.
+    // stripe lets you only specify one of these parameters: customer, customer_email.
+    // if we have an existing customer id, we can pass it to re-use it and avoid creating
+    // a new customer - alternatively, pass the current user email topre-populate the email
+    // field and make sure the purchase is associated to the current user.
     if (customerId) {
       params.customer = customerId;
     } else {
-      params.customer_email = email;
+      params.customer_email = customerEmail;
     }
-    const session = await stripe.checkout.sessions.create(params);
+    const session = await Stripe.checkout.sessions.create(params);
 
     return {
       sessionId: session.id,
@@ -38,9 +44,9 @@ export const createServerCheckoutSession = async ({ successUrl, cancelUrl, email
   }
 };
 
-export const createServerPortalSession = async ({ customerId, returnUrl }) => {
+export const createPortalSession = async ({ customerId, returnUrl }) => {
   try {
-    const portalsession = await stripe.billingPortal.sessions.create({
+    const portalsession = await Stripe.billingPortal.sessions.create({
       customer: customerId,
       // This is the url to which the customer will be redirected when they are done
       // managign their billing with the portal.

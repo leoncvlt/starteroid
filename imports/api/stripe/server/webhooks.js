@@ -25,9 +25,14 @@ const handleCustomerCreated = (event, response) => {
 };
 
 const handleCustomerSubscriptionUpdated = (event, response) => {
-  const { status, current_period_end, id: customerId } = event.data.object;
+  const {
+    id: subscriptionId,
+    status,
+    current_period_end,
+    customer: customerId,
+  } = event.data.object;
   updateSubscriptionData
-    .callPromise({ customerId, status, current_period_end })
+    .callPromise({ customerId, subscriptionId, status, current_period_end })
     .catch((error) => failWebhook(error, response));
 };
 
@@ -51,6 +56,7 @@ WebApp.connectHandlers.use("/api/stripe/webhooks", (request, response, next) => 
           return;
         }
         const data = event.data.object;
+        console.log(`[api.stripe.webhooks] processing event: ${event.type}`);
         switch (event.type) {
           case "checkout.session.completed":
             // Payment is successful and the subscription is created.

@@ -22,6 +22,7 @@ import { SubscriptionPromptProvider } from "../../context/subscriptionPromptCont
 
 import { useAccount } from "../../hooks/useAccount.js";
 import { PageLoadingProvider } from "../../context/pageLoadingContext.js";
+import { PlansPage } from "../pages/plans/PlansPage.jsx";
 
 export const App = () => {
   const { userId } = useAccount();
@@ -44,6 +45,7 @@ export const App = () => {
                 />
                 <PrivateRoute exact path="/sign-out" component={SignOut} />
                 <PrivateRoute exact path="/account" component={AccountPage} />
+                <PrivateRoute exact path="/membership" component={PlansPage} />
 
                 <PublicRoute exact path="/" redirect={`/links/${userId}`} component={LinksPage} />
                 <Route exact path="/links/:ownerId" component={LinksPage} />

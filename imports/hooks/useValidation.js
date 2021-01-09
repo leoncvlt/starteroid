@@ -24,6 +24,7 @@ export const useValidation = (simpleSchema, clean = true) => {
 
   const hasError = (name) => errors.find((e) => e.name == name) != null;
   const errorText = (name) => errors.find((e) => e.name == name)?.message;
+  const clearErrors = () => setErrors([]);
 
-  return { validate, hasError, errorText };
+  return { validate, hasError, errorText, clearErrors };
 };

@@ -13,7 +13,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { useAccount } from "../hooks/useAccount";
-import { openCheckoutOrPortalForm } from "../modules/stripe";
+import { startStripeSession } from "../modules/stripe";
 
 export const SubscriptionPromptContext = React.createContext();
 
@@ -24,14 +24,13 @@ export const SubscriptionPromptProvider = ({ children }) => {
 
   const cancelRef = React.useRef();
 
-  const handleStripeRedirect = () => {
-    const location = window.location.href;
-    openCheckoutOrPortalForm(user, location, location);
+  const handleStartStripeSession = ({ priceId, successUrl, returnUrl }) => {
+    startStripeSession({ user, priceId, successUrl, returnUrl });
   };
 
   return (
     <SubscriptionPromptContext.Provider
-      value={{ onOpen, setPromptText, isSubscribed, handleStripeRedirect }}
+      value={{ onOpen, setPromptText, isSubscribed, handleStartStripeSession }}
     >
       {children}
       {!isSubscribed && (
@@ -54,7 +53,7 @@ export const SubscriptionPromptProvider = ({ children }) => {
               <Button ref={cancelRef} onClick={onClose}>
                 Maybe later
               </Button>
-              <Button colorScheme="blue" ml={3} onClick={handleStripeRedirect}>
+              <Button colorScheme="blue" ml={3} onClick={handleStartStripeSession}>
                 Update now
               </Button>
             </AlertDialogFooter>

@@ -19,18 +19,18 @@ const FREE_LINKS_LIMIT = 5;
 
 export const LinksPage = () => {
   const [currentLinkId, setCurrentLinkId] = useState(null);
+  const { openSubscriptionPrompt, isSubscribed } = useSubscription();
   const { setPageLoading } = useContext(PageLoadingContext);
+  const { ownerId } = useParams();
   const {
     isOpen: isLinkModalOpen,
     onOpen: openLinkModal,
     onClose: closeLinkModal,
   } = useDisclosure();
-  const { openSubscriptionPrompt, isSubscribed } = useSubscription();
-  const { ownerId } = useParams();
 
   const { links, loggedIn, owned, viewable, loading } = useTracker(() => {
     const userSubscription = Meteor.subscribe("user.private", ownerId);
-    const subscription = ownerId
+    const linksSubscription = ownerId
       ? Meteor.subscribe("links.user", ownerId)
       : Meteor.subscribe("links.public");
     const owner = Meteor.users.findOne(ownerId);
@@ -42,30 +42,21 @@ export const LinksPage = () => {
 
     return {
       links: Links.find().fetch(),
+      loggedIn: !!currentUserId,
       owned: currentUserId === ownerId,
       viewable: isPublic || isCurrentUserOwner || isOwnerPublic,
-      loggedIn: !!currentUserId,
-      loading: !userSubscription.ready() || !subscription.ready(),
+      loading: !userSubscription.ready() || !linksSubscription.ready(),
     };
   }, [ownerId]);
 
   useEffect(() => setPageLoading(loading), [loading]);
 
-  const handleLinkCreate = (linkData) => {
-    if (!canAddLink()) {
-      return;
-    }
-    createLink
-      .callPromise(linkData)
-      .then((result) => closeLinkModal())
-      .catch((error) => console.log(error));
+  const handleOnLinkCreate = (linkData) => {
+    return canAddLink() ? createLink.callPromise(linkData) : new Promise();
   };
 
-  const handleLinkUpdate = (linkData) => {
-    updateLink
-      .callPromise(linkData)
-      .then((result) => closeLinkModal())
-      .catch((error) => console.log(error));
+  const handleOnLinkUpdate = (linkData) => {
+    return updateLink.callPromise(linkData);
   };
 
   const handleLinkDelete = (linkId) => {
@@ -115,8 +106,8 @@ export const LinksPage = () => {
                 currentLinkId={currentLinkId}
                 isOpen={isLinkModalOpen}
                 onClose={handleDialogClose}
-                onCreate={handleLinkCreate}
-                onUpdate={handleLinkUpdate}
+                onCreate={handleOnLinkCreate}
+                onUpdate={handleOnLinkUpdate}
               />
               <br />
               <LinksShare loading={loading} />

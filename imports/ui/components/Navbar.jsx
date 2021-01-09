@@ -14,13 +14,10 @@ import {
 import { ChevronDownIcon, MoonIcon, SunIcon } from "@chakra-ui/icons";
 import { useAccount } from "../../hooks/useAccount";
 import { Link as RouterLink } from "react-router-dom";
-import { openCheckoutOrPortalForm } from "../../modules/stripe";
-import { useSubscription } from "../../hooks/useSubscription";
 
 export const Navbar = (props) => {
   const { colorMode, toggleColorMode } = useColorMode();
-  const { email, user, isLoggedIn } = useAccount();
-  const { isSubscribed, handleStripeRedirect } = useSubscription();
+  const { email, isLoggedIn, isSubscribed } = useAccount();
 
   return (
     <Flex
@@ -49,7 +46,10 @@ export const Navbar = (props) => {
                   {email}
                 </MenuButton>
                 <MenuList>
-                  <MenuItem onClick={handleStripeRedirect}>
+                  <MenuItem
+                    as={RouterLink}
+                    to={{ pathname: "/membership", state: { from: window.location.href } }}
+                  >
                     {isSubscribed ? "Manage" : "Update"} Subscription
                   </MenuItem>
                   <MenuItem as={RouterLink} to="/account">

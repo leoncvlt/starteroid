@@ -1,5 +1,4 @@
 import { Meteor } from "meteor/meteor";
-import { createCheckoutSession, createPortalSession } from "../api/stripe/methods";
 
 const loadStripe = () =>
   new Promise((resolve, reject) => {
@@ -28,21 +27,24 @@ const loadStripe = () =>
     }
   });
 
-export const openCheckoutForm = async ({ successUrl, cancelUrl }) => {
-  const stripe = await loadStripe();
-  const session = await createCheckoutSession.callPromise({ successUrl, cancelUrl });
-  stripe.redirectToCheckout({ sessionId: session.sessionId });
-};
-
-export const openPortalForm = async ({ returnUrl }) => {
-  const session = await createPortalSession.callPromise({ customerId, returnUrl });
-  window.location.href = session.url;
-};
-
-export const openCheckoutOrPortalForm = async (user, successUrl, cancelUrl) => {
-  if (user.customer && user.customer.id && user.subscription) {
-    await openPortalForm({ returnUrl: cancelUrl });
-  } else {
-    await openCheckoutForm({ successUrl, cancelUrl });
-  }
+export const startStripeSession = ({ priceId, successUrl, returnUrl }) => {
+  const host = Meteor.absoluteUrl();
+  successUrl = successUrl || host;
+  returnUrl = returnUrl || host;
+  Meteor.call(
+    "stripe.session.create",
+    { priceId, successUrl, returnUrl },
+    async (error, session) => {
+      if (error) {
+        console.error(error);
+        return;
+      }
+      if (session.url) {
+        window.location.href = session.url;
+      } else {
+        const stripe = await loadStripe();
+        stripe.redirectToCheckout({ sessionId: session.sessionId });
+      }
+    }
+  );
 };

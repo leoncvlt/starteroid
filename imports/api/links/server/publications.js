@@ -8,3 +8,7 @@ Meteor.publish("links.public", function publishPublicLinks() {
 Meteor.publish("links.user", function publishLinksForUser(ownerId) {
   return Links.find({ owner: ownerId });
 });
+
+Meteor.publish("links.one", function publishSingleLink(linksId) {
+  return Links.find({ _id: linksId });
+});

@@ -53,12 +53,12 @@ export const updateSubscriptionData = new ValidatedMethod({
   name: "users.update.subscription",
   mixins: [CallPromiseMixin],
   validate: null,
-  async run({ customerId, status, currentPeriodEnd }) {
+  async run({ customerId, subscriptionId, status, currentPeriodEnd }) {
     const user = Meteor.users.findOne({ "customer.id": customerId });
     if (!user) {
       throw new Meteor.Error("500", `User with customerId ${customerId} not found`);
     }
-    const subscription = { status, currentPeriodEnd };
+    const subscription = { id: subscriptionId, status, currentPeriodEnd };
     return Meteor.users.update(user._id, { $set: { subscription } });
   },
 });
