@@ -52,16 +52,16 @@ export const App = () => {
 
                 <Route exact path="/privacy-policy">
                   <PrivacyPolicyPage
-                    websiteName="Astarteroid"
-                    websiteUrl="astarteroid.com"
-                    companyName="Astarteroid"
+                    websiteName="Starteroid"
+                    websiteUrl="starteroid.com"
+                    companyName="Starteroid"
                   />
                 </Route>
                 <Route exact path="/terms-and-conditions">
                   <TermsAndConditionsPage
-                    websiteName="Astarteroid"
-                    websiteUrl="astarteroid.com"
-                    companyName="Astarteroid"
+                    websiteName="Starteroid"
+                    websiteUrl="starteroid.com"
+                    companyName="Starteroid"
                   />
                 </Route>
                 <Route path="*" component={NotFoundPage} />

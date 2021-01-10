@@ -34,7 +34,7 @@ export const Navbar = (props) => {
       <Flex align="center" ml={3}>
         <RouterLink to="/">
           <Heading as="h1" size="md">
-            🌠 Astarteroid
+            🌠 Starteroid
           </Heading>
         </RouterLink>
       </Flex>
