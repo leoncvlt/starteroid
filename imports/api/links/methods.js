@@ -40,22 +40,3 @@ export const deleteAllLinksForUser = new ValidatedMethod({
     return Links.remove({ owner: userId });
   },
 });
-
-export const getLink = new ValidatedMethod({
-  name: "links.get.one",
-  mixins: [CallPromiseMixin],
-  validate: (id) => check(id, String),
-  run(id) {
-    return Links.findOne({ _id: id });
-  },
-});
-
-export const getLinks = new ValidatedMethod({
-  name: "links.get.many",
-  mixins: [CallPromiseMixin],
-  validate: null,
-  run(params) {
-    const { query = {}, options } = params || {};
-    return Links.find(query, options).fetch();
-  },
-});
