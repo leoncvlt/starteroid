@@ -1,6 +1,7 @@
 import React from "react";
 import { Heading, Text, ListItem, UnorderedList, Stack } from "@chakra-ui/react";
 
+//from https://www.privacypolicygenerator.info/
 export const PrivacyPolicyPage = ({ companyName, websiteName, websiteUrl }) => {
   return (
     <Stack shouldWrapChildren>

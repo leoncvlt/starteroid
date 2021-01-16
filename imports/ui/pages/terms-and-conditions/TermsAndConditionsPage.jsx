@@ -2,6 +2,7 @@ import React from "react";
 import { Heading, Text, Link, ListItem, UnorderedList, Stack } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 
+//from https://www.termsandconditionsgenerator.com/
 export const TermsAndConditionsPage = ({ companyName, websiteName, websiteUrl }) => {
   return (
     <Stack shouldWrapChildren>

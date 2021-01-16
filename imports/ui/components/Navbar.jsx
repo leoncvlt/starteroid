@@ -14,12 +14,12 @@ import {
 import { ChevronDownIcon, MoonIcon, SunIcon } from "@chakra-ui/icons";
 import { useAccount } from "../../hooks/useAccount";
 import { Link as RouterLink } from "react-router-dom";
-import { useSubscription } from "../../hooks/useSubscription";
+import { useMembership } from "../../hooks/useMembership";
 
 export const Navbar = (props) => {
   const { colorMode, toggleColorMode } = useColorMode();
   const { email, isLoggedIn } = useAccount();
-  const { isSubscribed } = useSubscription();
+  const { isSubscribed } = useMembership();
 
   return (
     <Flex

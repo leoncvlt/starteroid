@@ -11,9 +11,6 @@ export const useAccount = (extraFields = {}) =>
       user,
       userId,
       email: user?.emails[0]?.address,
-      isSubscribed: user
-        ? ["active", "trialing", "past_due"].some((s) => user?.subscription?.status == s)
-        : undefined,
       isLoggedIn: !!userId,
     };
   }, []);

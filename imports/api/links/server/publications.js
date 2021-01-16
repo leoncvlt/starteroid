@@ -5,7 +5,7 @@ Meteor.publish("links.public", function publishPublicLinks() {
   return Links.find({ owner: null });
 });
 
-Meteor.publish("links.user", function publishLinksForUser(ownerId) {
+Meteor.publish("links.private", function publishLinksForUser(ownerId) {
   return Links.find({ owner: ownerId });
 });
 

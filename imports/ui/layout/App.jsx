@@ -10,7 +10,7 @@ import { SignOut } from "../components/authentication/SignOut.jsx";
 
 import { LinksPage } from "../pages/links/LinksPage.jsx";
 import { AccountPage } from "../pages/account/AccountPage.jsx";
-import { PlansPage } from "../pages/plans/PlansPage.jsx";
+import { MembershipPage } from "../pages/membership/MembershipPage.jsx";
 import { SignInPage } from "../pages/authentication/SignInPage.jsx";
 import { SignUpPage } from "../pages/authentication/SignUpPage.jsx";
 import { ForgotPasswordPage } from "../pages/authentication/ForgotPasswordPage.jsx";
@@ -19,7 +19,7 @@ import { NotFoundPage } from "../pages/not-found/NotFoundPage.jsx";
 import { PrivacyPolicyPage } from "../pages/privacy-policy/PrivacyPolicyPage.jsx";
 import { TermsAndConditionsPage } from "../pages/terms-and-conditions/TermsAndConditionsPage.jsx";
 
-import { SubscriptionProvider } from "../../context/subscriptionContext.js";
+import { MembershipProvider } from "../../context/MembershipContext.js";
 import { PageLoadingProvider } from "../../context/pageLoadingContext.js";
 
 import { useAccount } from "../../hooks/useAccount.js";
@@ -30,25 +30,40 @@ export const App = () => {
     <Router>
       <ChakraProvider>
         <CookiesConsent />
-        <SubscriptionProvider>
+        <MembershipProvider>
           <Navbar />
           <Container maxW="xl" mb={16}>
             <PageLoadingProvider>
               <Switch>
-                <PublicRoute exact path="/sign-in" component={SignInPage} />
-                <PublicRoute exact path="/register" component={SignUpPage} />
-                <Route exact path="/recover-password" component={ForgotPasswordPage} />
-                <Route
-                  name="reset-password"
-                  path="/reset-password/:token"
-                  component={ResetPasswordPage}
-                />
-                <PrivateRoute exact path="/sign-out" component={SignOut} />
-                <PrivateRoute exact path="/account" component={AccountPage} />
-                <PrivateRoute exact path="/membership" component={PlansPage} />
+                <PublicRoute exact path="/sign-in">
+                  <SignInPage />
+                </PublicRoute>
+                <PublicRoute exact path="/register">
+                  <SignUpPage />
+                </PublicRoute>
+                <PrivateRoute exact path="/sign-out">
+                  <SignOut />
+                </PrivateRoute>
+                <Route exact path="/recover-password">
+                  <ForgotPasswordPage />
+                </Route>
+                <Route name="reset-password" path="/reset-password/:token">
+                  <ResetPasswordPage />
+                </Route>
 
-                <PublicRoute exact path="/" redirect={`/links/${userId}`} component={LinksPage} />
-                <Route exact path="/links/:ownerId" component={LinksPage} />
+                <PrivateRoute exact path="/account">
+                  <AccountPage />
+                </PrivateRoute>
+                <PrivateRoute exact path="/membership">
+                  <MembershipPage />
+                </PrivateRoute>
+
+                <PublicRoute exact path="/" redirect={`/links/${userId}`}>
+                  <LinksPage />
+                </PublicRoute>
+                <Route exact path="/links/:ownerId">
+                  <LinksPage />
+                </Route>
 
                 <Route exact path="/privacy-policy">
                   <PrivacyPolicyPage
@@ -64,11 +79,14 @@ export const App = () => {
                     companyName="Starteroid"
                   />
                 </Route>
-                <Route path="*" component={NotFoundPage} />
+
+                <Route path="*">
+                  <NotFoundPage />
+                </Route>
               </Switch>
             </PageLoadingProvider>
           </Container>
-        </SubscriptionProvider>
+        </MembershipProvider>
       </ChakraProvider>
     </Router>
   );

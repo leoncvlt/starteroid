@@ -7,4 +7,5 @@ import "../../api/users/methods";
 import "../../api/stripe/server/methods";
 import "../../api/stripe/server/webhooks";
 
-import "../../api/stripe/plans/server/publications";
+// import "../../api/stripe/plans/server/publications";
+import "../../api/stripe/plans/methods";

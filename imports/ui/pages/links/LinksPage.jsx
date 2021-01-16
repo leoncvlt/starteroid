@@ -12,14 +12,14 @@ import { LinksShare } from "./LinksShare";
 import { Links } from "../../../api/links/links";
 import { createLink, deleteLink, updateLink } from "../../../api/links/methods";
 
-import { useSubscription } from "../../../hooks/useSubscription";
+import { useMembership } from "../../../hooks/useMembership";
 import { PageLoadingContext } from "../../../context/pageLoadingContext";
 
 const FREE_LINKS_LIMIT = 5;
 
 export const LinksPage = () => {
   const [currentLinkId, setCurrentLinkId] = useState(null);
-  const { openSubscriptionPrompt, isSubscribed } = useSubscription();
+  const { openPurchasePrompt, isSubscribed } = useMembership();
   const { setPageLoading } = useContext(PageLoadingContext);
   const { ownerId } = useParams();
   const {
@@ -31,7 +31,7 @@ export const LinksPage = () => {
   const { links, loggedIn, owned, viewable, loading } = useTracker(() => {
     const userSubscription = Meteor.subscribe("user.private", ownerId);
     const linksSubscription = ownerId
-      ? Meteor.subscribe("links.user", ownerId)
+      ? Meteor.subscribe("links.private", ownerId)
       : Meteor.subscribe("links.public");
     const owner = Meteor.users.findOne(ownerId);
     const currentUserId = Meteor.userId();
@@ -116,7 +116,7 @@ export const LinksPage = () => {
           {!loggedIn && (
             <Alert status="info" rounded={4}>
               <AlertIcon />
-              Sign In to create and share your own links.
+              Sign In or register to create and share your own links.
             </Alert>
           )}
         </Stack>

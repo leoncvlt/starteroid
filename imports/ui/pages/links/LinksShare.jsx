@@ -13,19 +13,19 @@ import {
 } from "@chakra-ui/react";
 import { useAccount } from "../../../hooks/useAccount";
 import { makeLinksPrivate, makeLinksPublic } from "../../../api/users/methods";
-import { useSubscription } from "../../../hooks/useSubscription";
+import { useMembership } from "../../../hooks/useMembership";
 
 export const LinksShare = ({ loading }) => {
   const { user } = useAccount({ private: 1 });
   const [disabled, setDisabled] = useState(false);
-  const { openSubscriptionPrompt, isSubscribed } = useSubscription();
+  const { openPurchasePrompt, isSubscribed } = useMembership();
 
   const shareableLink = `${window.location.origin}/links/${user?._id}`;
   const { hasCopied, onCopy } = useClipboard(shareableLink);
 
   handleMakePrivate = (event) => {
     if (!isSubscribed) {
-      openSubscriptionPrompt("Members with a PRO subscription can set their link list to private.");
+      openPurchasePrompt("Members with a PRO subscription can set their link list to private.");
       return;
     }
     setDisabled(true);

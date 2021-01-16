@@ -9,7 +9,7 @@ export const PublicRoute = ({ children, redirect, ...rest }) => {
     <Route
       {...rest}
       render={({ location }) =>
-        isLoggedIn ? (
+        !isLoggedIn ? (
           children
         ) : (
           <Redirect
